@@ -13,7 +13,36 @@ Files:
 
 **Purpose:** Provides text-to-speech conversion via MCP protocol
 
-### 2. VS Code Extension
+### 2. HTTP Service (Node.js) ⭐ RECOMMENDED
+**Location:** `service/`
+
+Files:
+- `edge-tts-service.js` - Express HTTP proxy service
+
+**Purpose:** HTTP bridge between Copilot and MCP server
+
+**Features:**
+- `/speak-from-file` - Generate TTS and play audio
+- `/play-mp3` - Play existing MP3 files (NEW!)
+- `/speak-debug-output` - Save MP3 to C:/temp
+- Automatic temp file cleanup
+- Windows MediaPlayer integration
+- Docker file transfer support
+
+**Start Service:**
+```bash
+PORT=3006 node service/edge-tts-service.js
+```
+
+**Persistent Container:**
+```bash
+docker run -d --name edge-tts \
+  --restart always \
+  -p 12434:12434 \
+  edge-tts-mcp
+```
+
+### 3. VS Code Extension
 **Location:** `copilot-speak-extension/`
 
 Files:
@@ -32,6 +61,29 @@ Files:
 
 ## How It Works
 
+### HTTP Service (Recommended)
+```
+User types in Copilot Chat:
+  @workspace /speak Hello world!
+         ↓
+Copilot creates temp file with text
+         ↓
+HTTP GET to localhost:3006/speak-from-file
+         ↓
+Express service (edge-tts-service.js)
+         ↓
+Docker exec to MCP server (JSON-RPC)
+         ↓
+Edge TTS generates MP3 (/tmp/output.mp3)
+         ↓
+Docker cp to host (C:/temp/...)
+         ↓
+PowerShell MediaPlayer plays audio
+         ↓
+Service deletes temp file, returns status
+```
+
+### VS Code Extension
 ```
 User types in Copilot Chat:
   @speak-edge Hello world!
@@ -58,12 +110,23 @@ Extension displays result in chat
 
 ## Next Steps
 
-1. **Test the Extension:**
+1. **Start HTTP Service (Recommended):**
+   ```bash
+   PORT=3006 node service/edge-tts-service.js
+   ```
+
+2. **Use in Copilot Chat:**
+   ```
+   @workspace /speak Hello, this is a test!
+   @workspace /play-mp3 C:/temp/edge-tts-1234567890.mp3
+   ```
+
+3. **Test the Extension (Optional):**
    ```bash
    # Press F5 in VS Code to launch Extension Development Host
    ```
 
-2. **Use in Copilot Chat:**
+4. **Use Extension in Copilot Chat:**
    ```
    @speak-edge Hello, this is a test of the text-to-speech system!
    ```

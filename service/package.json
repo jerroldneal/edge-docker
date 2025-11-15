@@ -1,0 +1,16 @@
+{
+  "name": "edge-tts-service",
+  "version": "1.0.0",
+  "description": "HTTP proxy service for Edge TTS MCP server",
+  "main": "edge-tts-service.js",
+  "scripts": {
+    "start": "node edge-tts-service.js",
+    "dev": "node edge-tts-service.js"
+  },
+  "keywords": ["edge-tts", "mcp", "text-to-speech", "docker"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

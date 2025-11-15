@@ -20,7 +20,26 @@ This will:
 - Build a Docker image with Edge TTS
 - Configure VS Code settings (if needed)
 
-## Step 2: Install the Copilot Extension
+## Step 2: Start the HTTP Service (Recommended)
+
+The HTTP service provides the easiest integration with GitHub Copilot:
+
+```bash
+cd /d/development/edge-docker
+PORT=3006 node service/edge-tts-service.js
+```
+
+This starts the service on **http://localhost:3006** with:
+- Text-to-speech generation and playback
+- MP3 file playback ‚≠ê NEW
+- Debug output mode
+
+**For persistent service**, create a Docker container:
+```bash
+# See service/edge-tts-service.js for container setup
+```
+
+## Step 3: Install the Copilot Extension (Optional)
 
 ```bash
 cd copilot-speak-extension
@@ -39,9 +58,27 @@ Option B - Manual Install:
 1. Package the extension: `npx @vscode/vsce package`
 2. Install the .vsix file: Extensions ‚Üí ‚ãØ ‚Üí Install from VSIX
 
-## Step 4: Use the Command
+## Step 4: Use with GitHub Copilot
 
-In the new VS Code window, open GitHub Copilot Chat and type:
+### Option A: HTTP Service (Recommended)
+
+In GitHub Copilot Chat:
+
+```
+@workspace /speak Hello world! This is my first text-to-speech message.
+@workspace /play-mp3 C:/temp/edge-tts-1234567890.mp3
+@workspace /speak-debug-output Testing audio generation
+```
+
+The service will:
+1. Convert text to speech using Edge TTS in Docker
+2. Play audio through Windows speakers
+3. Automatically delete temp files
+4. Report status and file information
+
+### Option B: VS Code Extension
+
+In the Extension Development Host window:
 
 ```
 @speak-edge Hello world! This is my first text-to-speech message.
@@ -86,4 +123,4 @@ You should see a JSON response from the MCP server.
 - Add more MCP tools to the server
 - Package and share the extension
 
-Enjoy your voice-enabled Copilot! Ìæ§
+Enjoy your voice-enabled Copilot! ÔøΩÔøΩÔøΩ

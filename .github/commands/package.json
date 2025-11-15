@@ -1,0 +1,12 @@
+{
+  "name": "copilot-speak-commands",
+  "version": "1.0.0",
+  "description": "Copilot commands for invoking Windows TTS vocalization",
+  "type": "module",
+  "scripts": {
+    "speak": "node speak-command.mjs"
+  },
+  "keywords": ["copilot", "tts", "vocalize", "speak", "p2p"],
+  "author": "jerroldneal",
+  "license": "MIT"
+}

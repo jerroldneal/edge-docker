@@ -22,6 +22,49 @@ Add this to your `settings.json` (File → Preferences → Settings → Open Set
 
 **Settings location:** `%APPDATA%\Code\User\settings.json` (Windows)
 
+## HTTP Service (Copilot Integration)
+
+### Running the Service
+
+```bash
+PORT=3006 node service/edge-tts-service.js
+```
+
+Service runs on **http://localhost:3006**
+
+### Copilot Commands
+
+#### `/speak` - Text-to-Speech with Playback
+```javascript
+const tempFile = 'C:/temp/copilot-speak-' + Date.now() + '.txt';
+await create_file(tempFile, 'Your message here');
+await fetch_webpage(['http://localhost:3006/speak-from-file?filePath=' + tempFile], 'speak');
+```
+
+#### `/play-mp3` - Play Existing MP3 Files ⭐ NEW
+```javascript
+// Play from host
+await fetch_webpage(['http://localhost:3006/play-mp3?filePath=C:/temp/audio.mp3'], 'play-mp3');
+
+// Play from container
+await fetch_webpage(['http://localhost:3006/play-mp3?filePath=/tmp/output.mp3'], 'play-mp3');
+```
+
+**Features:**
+- ✅ Play MP3 from Windows filesystem
+- ✅ Play MP3 from Docker container (auto-copied)
+- ✅ Full duration playback
+- ✅ File size reporting
+
+#### `/speak-debug-output` - Save MP3 to C:/temp
+```javascript
+const tempFile = 'C:/temp/copilot-speak-debug-' + Date.now() + '.txt';
+await create_file(tempFile, 'Your message here');
+await fetch_webpage(['http://localhost:3006/speak-debug-output?filePath=' + tempFile], 'speak-debug');
+```
+
+Audio file copied to: `C:/temp/edge-tts-{timestamp}.mp3`
+
 ## Available MCP Tools
 
 ### 1. **speak** - Convert text to speech
