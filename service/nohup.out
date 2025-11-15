@@ -1,0 +1,104 @@
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ⚙️  Docker Script Execution Service v2.0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Listening:     http://0.0.0.0:3007
+  From Docker:   http://host.docker.internal:3007
+  Temp Dir:      C:\temp
+  Started:       2025-11-15T06:15:53.220Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📜 Script Types:
+   • bash - Execute bash scripts
+   • pws/powershell - Execute PowerShell scripts
+
+🎯 Ready to execute scripts...
+📊 Stats: http://localhost:3007/stats
+❌ Stop: Ctrl+C
+
+[Execute] Processing 1 script(s)...
+[Code Gen] Generating pws code for: "List all files and folders in C:\ with their names and last ..."
+[Code Gen] Calling Docker AI (timeout: 60s)...
+[Docker AI] Sending request to http://localhost:12434/engines/v1/chat/completions (model: ai/phi4:latest, timeout: 60000ms)
+[Docker AI] Response received
+AI Response: {
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Get-ChildItem C:\\ -Recurse | Select-Object Name, LastWriteTime | Format-Table -AutoSize"
+      }
+    }
+  ],
+  "created": 1763187366,
+  "model": "ai/phi4:latest",
+  "system_fingerprint": "b1-97d5117",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 26,
+    "prompt_tokens": 186,
+    "total_tokens": 212
+  },
+  "id": "chatcmpl-ApIIzcj9PdpGRa6e0wlTUT6MsLCyX0Mo",
+  "timings": {
+    "cache_n": 185,
+    "prompt_n": 1,
+    "prompt_ms": 189.865,
+    "prompt_per_token_ms": 189.865,
+    "prompt_per_second": 5.266900165907355,
+    "predicted_n": 26,
+    "predicted_ms": 934.794,
+    "predicted_per_token_ms": 35.95361538461538,
+    "predicted_per_second": 27.813614550371526
+  }
+}
+[Code Gen] AI responded in 3s
+[Code Gen] ✅ Generated code (87 chars)
+[Code Gen] Code preview:
+Get-ChildItem C:\ -Recurse | Select-Object Name, LastWriteTime | Format-Table -AutoSize
+[Code Gen] Saved to: C:\temp\generated-code-1763187363469.ps1
+[Execute] Processing 1 script(s)...
+[Code Gen] Generating pws code for: "List all files and folders in C:\ with their names and last ..."
+[Code Gen] Calling Docker AI (timeout: 60s)...
+[Docker AI] Sending request to http://localhost:12434/engines/v1/chat/completions (model: ai/phi4:latest, timeout: 60000ms)
+[Docker AI] Response received
+AI Response: {
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Get-ChildItem -Path C:\\ -Recurse | Select-Object Name, LastWriteTime | Format-Table -AutoSize"
+      }
+    }
+  ],
+  "created": 1763187376,
+  "model": "ai/phi4:latest",
+  "system_fingerprint": "b1-97d5117",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 28,
+    "prompt_tokens": 186,
+    "total_tokens": 214
+  },
+  "id": "chatcmpl-Ta16DXoDQhVvAOPfKLyUJbw7Ht5gxMYY",
+  "timings": {
+    "cache_n": 185,
+    "prompt_n": 1,
+    "prompt_ms": 291.486,
+    "prompt_per_token_ms": 291.486,
+    "prompt_per_second": 3.430696500003431,
+    "predicted_n": 28,
+    "predicted_ms": 1005.507,
+    "predicted_per_token_ms": 35.910964285714286,
+    "predicted_per_second": 27.846648506673752
+  }
+}
+[Code Gen] AI responded in 4s
+[Code Gen] ✅ Generated code (93 chars)
+[Code Gen] Code preview:
+Get-ChildItem -Path C:\ -Recurse | Select-Object Name, LastWriteTime | Format-Table -AutoSize
+[Code Gen] Saved to: C:\temp\generated-code-1763187373293.ps1

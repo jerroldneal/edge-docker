@@ -13,10 +13,12 @@ async function callDockerAI(prompt, options = {}) {
     model = 'ai/phi4:latest',
     apiUrl = 'http://localhost:12434/engines/v1/chat/completions',
     maxTokens = 500,
-    temperature = 0.7
+    temperature = 0.7,
+    timeout = 60000 // Default 60 second timeout
   } = options;
 
   try {
+    console.log(`[Docker AI] Sending request to ${apiUrl} (model: ${model}, timeout: ${timeout}ms)`);
     const response = await axios.post(apiUrl, {
       model: model,
       messages: [
@@ -28,9 +30,10 @@ async function callDockerAI(prompt, options = {}) {
       max_tokens: maxTokens,
       temperature: temperature
     }, {
-      timeout: 120000 // 120 second timeout (model loading can take time)
+      timeout: timeout
     });
 
+    console.log('[Docker AI] Response received');
     // Debug: log the response
     console.log('AI Response:', JSON.stringify(response.data, null, 2));
 
@@ -44,8 +47,12 @@ async function callDockerAI(prompt, options = {}) {
 
     throw new Error('Invalid response from Docker AI');
   } catch (error) {
+    console.error('[Docker AI] Error:', error.message);
     if (error.code === 'ECONNREFUSED') {
       throw new Error('Docker AI not available - ensure Docker Desktop Model Runner is running and host TCP support is enabled');
+    }
+    if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+      throw new Error(`Docker AI request timed out after ${timeout}ms`);
     }
     throw error;
   }

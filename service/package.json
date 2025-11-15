@@ -11,7 +11,8 @@
     "dev": "node edge-tts-service.js",
     "test:summarize": "node test-summarize.js",
     "test:logs": "node test-docker-logs.js",
-    "test:docker": "node test-docker-service.js"
+    "test:docker": "node test-docker-service.js",
+    "test:codegen": "node test-code-generation.js"
   },
   "keywords": ["edge-tts", "mcp", "text-to-speech", "docker"],
   "author": "",

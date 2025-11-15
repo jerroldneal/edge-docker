@@ -134,7 +134,8 @@ function setupDockerRoutes(app, methods, stats) {
       scriptTypes: {
         bash: 'Execute bash scripts (.sh files or inline content)',
         pws: 'Execute PowerShell scripts (.ps1 files or inline content)',
-        powershell: 'Alias for pws'
+        powershell: 'Alias for pws',
+        code: 'AI-generated code from natural language (requires expectation or content field, optional targetType: bash|pws)'
       },
       examples: {
         bash_file: {
@@ -154,6 +155,16 @@ function setupDockerRoutes(app, methods, stats) {
         powershell_content: {
           type: 'pws',
           content: 'Write-Host "Hello from PowerShell"'
+        },
+        code_generation: {
+          type: 'code',
+          expectation: 'List all files in C:\\ with their sizes',
+          targetType: 'pws'
+        },
+        code_generation_bash: {
+          type: 'code',
+          content: 'Show disk usage for all mounted drives',
+          targetType: 'bash'
         }
       },
       stats: {

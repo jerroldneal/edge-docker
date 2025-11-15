@@ -2,6 +2,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const { spawn } = require('child_process');
+const { generateCode } = require('./code-generator');
 
 /**
  * Execute a script (bash or PowerShell) and capture output
@@ -10,8 +11,38 @@ const { spawn } = require('child_process');
  * @returns {object} Execution result with stdout/stderr file paths
  */
 async function executeScript(scriptObj, tempDir) {
-  const { type, path: scriptPath, content, params = [] } = scriptObj;
+  let { type, path: scriptPath, content, params = [] } = scriptObj;
   const timestamp = Date.now();
+
+  // Handle type=code: generate code from expectation using AI
+  if (type === 'code') {
+    if (!scriptObj.expectation && !content) {
+      throw new Error('Either expectation or content must be provided for type=code');
+    }
+
+    const expectation = scriptObj.expectation || content;
+    const targetType = scriptObj.targetType || 'pws'; // Default to PowerShell
+
+    console.log(`[Code Gen] Generating ${targetType} code for: "${expectation.substring(0, 60)}${expectation.length > 60 ? '...' : ''}"`);
+
+    try {
+      const generatedCode = await generateCode(expectation, targetType);
+      console.log(`[Code Gen] ✅ Generated code (${generatedCode.length} chars)`);
+      console.log(`[Code Gen] Code preview:\n${generatedCode.substring(0, 200)}${generatedCode.length > 200 ? '\n...' : ''}`);
+
+      // Replace content with generated code and update type
+      content = generatedCode;
+      type = targetType;
+
+      // Save generated code for reference
+      const codeFile = path.join(tempDir, `generated-code-${timestamp}.${targetType === 'bash' ? 'sh' : 'ps1'}`);
+      await fs.writeFile(codeFile, generatedCode, 'utf8');
+      console.log(`[Code Gen] Saved to: ${codeFile}`);
+    } catch (error) {
+      throw new Error(`Code generation failed: ${error.message}`);
+    }
+  }
+  const originalTimestamp = timestamp;
 
   // Determine shell and command
   let shellCommand;
@@ -103,7 +134,9 @@ async function executeScript(scriptObj, tempDir) {
           stderrFile: stderrFile,
           stdoutLength: stdoutData.length,
           stderrLength: stderrData.length,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          generatedCode: scriptObj.type === 'code' ? content : undefined,
+          codeFile: scriptObj.type === 'code' ? path.join(tempDir, `generated-code-${originalTimestamp}.${type === 'bash' ? 'sh' : 'ps1'}`) : undefined
         });
       } catch (err) {
         reject(new Error(`Failed to write output files: ${err.message}`));
