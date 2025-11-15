@@ -10,7 +10,7 @@ const axios = require('axios');
  */
 async function callDockerAI(prompt, options = {}) {
   const {
-    model = 'llama3.2:latest',
+    model = 'ai/phi4:latest',
     apiUrl = 'http://localhost:12434/engines/v1/chat/completions',
     maxTokens = 500,
     temperature = 0.7
@@ -28,12 +28,18 @@ async function callDockerAI(prompt, options = {}) {
       max_tokens: maxTokens,
       temperature: temperature
     }, {
-      timeout: 30000 // 30 second timeout
+      timeout: 120000 // 120 second timeout (model loading can take time)
     });
+
+    // Debug: log the response
+    console.log('AI Response:', JSON.stringify(response.data, null, 2));
 
     // Extract response text from Docker AI response
     if (response.data && response.data.choices && response.data.choices.length > 0) {
-      return response.data.choices[0].message.content;
+      const choice = response.data.choices[0];
+      // Try content first, fall back to reasoning_content if content is empty
+      const text = choice.message.content || choice.message.reasoning_content || '';
+      return text.trim();
     }
 
     throw new Error('Invalid response from Docker AI');

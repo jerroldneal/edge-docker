@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node edge-tts-service.js",
     "start:2": "node edge-tts-service-2.js",
-    "dev": "node edge-tts-service.js"
+    "dev": "node edge-tts-service.js",
+    "test:summarize": "node test-summarize.js",
+    "test:logs": "node test-docker-logs.js"
   },
   "keywords": ["edge-tts", "mcp", "text-to-speech", "docker"],
   "author": "",
