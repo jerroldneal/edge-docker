@@ -1,0 +1,3 @@
+# requirements.txt
+edge-tts>=6.1.0
+mcp>=1.0.0

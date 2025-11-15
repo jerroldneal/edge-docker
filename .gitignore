@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+copilot-speak-extension/node_modules/
+copilot-speak-extension/dist/
+
+# Build outputs
+*.vsix
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Audio output files
+*.mp3
+output.mp3
+
+# Backup files
+*.bak
+
+# Docker volumes
+edge-tts-output/
