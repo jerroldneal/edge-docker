@@ -47,6 +47,18 @@ async function testCodeGeneration() {
         type: 'code',
         expectation: 'Create a hello.sh script in /tmp that prints "Hello World from Bash!" then execute it',
         targetType: 'bash'
+      },
+      {
+        name: 'Bash - Create a React App',
+        type: 'code',
+        expectation: 'Create script that creates a simple React application using create-react-app in /tmp/react-app directory',
+        targetType: 'bash'
+      },
+      {
+        name: 'Bash - Create a Countdown React App',
+        type: 'code',
+        expectation: 'Create script that creates a simple React application using create-react-app in /tmp/react-clock-app directory. It displays a countdown timer from 10 seconds down to 0, beeping every 1 second',
+        targetType: 'bash'
       }
     ];
 

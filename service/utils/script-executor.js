@@ -3,6 +3,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const { spawn } = require('child_process');
 const { generateCode } = require('./code-generator');
+const { speak } = require('./speech');
+const { summarizeText, interpretText } = require('./docker-ai');
 
 /**
  * Execute a script (bash or PowerShell) and capture output
@@ -13,6 +15,100 @@ const { generateCode } = require('./code-generator');
 async function executeScript(scriptObj, tempDir) {
   let { type, path: scriptPath, content, params = [] } = scriptObj;
   const timestamp = Date.now();
+
+  // Handle type=speak: speak text verbatim
+  if (type === 'speak') {
+    if (!content && !scriptObj.text) {
+      throw new Error('Either content or text must be provided for type=speak');
+    }
+
+    const textToSpeak = scriptObj.text || content;
+    console.log(`[Speak] Speaking verbatim: "${textToSpeak.substring(0, 60)}${textToSpeak.length > 60 ? '...' : ''}"`);
+
+    try {
+      const result = await speak(textToSpeak, scriptObj.options || {});
+      console.log(`[Speak] ✅ Spoken successfully (${result.length} chars)`);
+
+      return {
+        success: true,
+        type: 'speak',
+        spokenText: textToSpeak,
+        audioFile: result.audioFile,
+        voice: result.voice,
+        length: result.length,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      throw new Error(`Speech failed: ${error.message}`);
+    }
+  }
+
+  // Handle type=speak-interpret: AI interpretation then speak
+  if (type === 'speak-interpret') {
+    if (!content && !scriptObj.text) {
+      throw new Error('Either content or text must be provided for type=speak-interpret');
+    }
+
+    const textToInterpret = scriptObj.text || content;
+    console.log(`[Speak-Interpret] Interpreting: "${textToInterpret.substring(0, 60)}${textToInterpret.length > 60 ? '...' : ''}"`);
+
+    try {
+      const interpretation = await interpretText(textToInterpret, scriptObj.aiOptions || {});
+      console.log(`[Speak-Interpret] ✅ Interpretation: "${interpretation.substring(0, 100)}${interpretation.length > 100 ? '...' : ''}"`);
+
+      const result = await speak(interpretation, scriptObj.speechOptions || {});
+      console.log(`[Speak-Interpret] ✅ Spoken interpretation (${result.length} chars)`);
+
+      return {
+        success: true,
+        type: 'speak-interpret',
+        originalText: textToInterpret,
+        interpretation: interpretation,
+        spokenText: interpretation,
+        audioFile: result.audioFile,
+        voice: result.voice,
+        originalLength: textToInterpret.length,
+        interpretationLength: interpretation.length,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      throw new Error(`Interpretation/speech failed: ${error.message}`);
+    }
+  }
+
+  // Handle type=speak-summary: AI summarization then speak
+  if (type === 'speak-summary') {
+    if (!content && !scriptObj.text) {
+      throw new Error('Either content or text must be provided for type=speak-summary');
+    }
+
+    const textToSummarize = scriptObj.text || content;
+    console.log(`[Speak-Summary] Summarizing: "${textToSummarize.substring(0, 60)}${textToSummarize.length > 60 ? '...' : ''}"`);
+
+    try {
+      const summary = await summarizeText(textToSummarize, scriptObj.aiOptions || {});
+      console.log(`[Speak-Summary] ✅ Summary: "${summary.substring(0, 100)}${summary.length > 100 ? '...' : ''}"`);
+
+      const result = await speak(summary, scriptObj.speechOptions || {});
+      console.log(`[Speak-Summary] ✅ Spoken summary (${result.length} chars)`);
+
+      return {
+        success: true,
+        type: 'speak-summary',
+        originalText: textToSummarize,
+        summary: summary,
+        spokenText: summary,
+        audioFile: result.audioFile,
+        voice: result.voice,
+        originalLength: textToSummarize.length,
+        summaryLength: summary.length,
+        compression: Math.round((1 - summary.length / textToSummarize.length) * 100),
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      throw new Error(`Summarization/speech failed: ${error.message}`);
+    }
+  }
 
   // Handle type=code: generate code from expectation using AI
   if (type === 'code') {

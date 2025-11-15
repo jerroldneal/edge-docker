@@ -135,7 +135,10 @@ function setupDockerRoutes(app, methods, stats) {
         bash: 'Execute bash scripts (.sh files or inline content)',
         pws: 'Execute PowerShell scripts (.ps1 files or inline content)',
         powershell: 'Alias for pws',
-        code: 'AI-generated code from natural language (requires expectation or content field, optional targetType: bash|pws)'
+        code: 'AI-generated code from natural language (requires expectation or content field, optional targetType: bash|pws)',
+        speak: 'Speak text verbatim using Edge TTS (requires text or content field)',
+        'speak-interpret': 'AI interpretation then speech (requires text or content field)',
+        'speak-summary': 'AI summarization then speech (requires text or content field)'
       },
       examples: {
         bash_file: {
@@ -165,6 +168,20 @@ function setupDockerRoutes(app, methods, stats) {
           type: 'code',
           content: 'Show disk usage for all mounted drives',
           targetType: 'bash'
+        },
+        speak_verbatim: {
+          type: 'speak',
+          text: 'Hello, this is a test of text to speech'
+        },
+        speak_interpret: {
+          type: 'speak-interpret',
+          text: 'Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.',
+          aiOptions: { maxLength: 150 }
+        },
+        speak_summary: {
+          type: 'speak-summary',
+          content: 'Long text to be summarized...',
+          aiOptions: { maxLength: 50, style: 'concise' }
         }
       },
       stats: {

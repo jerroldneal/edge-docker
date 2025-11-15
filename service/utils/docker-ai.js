@@ -1,6 +1,14 @@
 // docker-ai.js - Docker Model Runner / Docker AI utilities
 
 const axios = require('axios');
+const http = require('http');
+const https = require('https');
+
+// Create a single axios instance with persistent connections
+const axiosInstance = axios.create({
+  httpAgent: new http.Agent({ keepAlive: true, maxSockets: 5 }),
+  httpsAgent: new https.Agent({ keepAlive: true, maxSockets: 5 })
+});
 
 /**
  * Call Docker AI (Model Runner) API
@@ -19,7 +27,7 @@ async function callDockerAI(prompt, options = {}) {
 
   try {
     console.log(`[Docker AI] Sending request to ${apiUrl} (model: ${model}, timeout: ${timeout}ms)`);
-    const response = await axios.post(apiUrl, {
+    const response = await axiosInstance.post(apiUrl, {
       model: model,
       messages: [
         {
@@ -78,7 +86,28 @@ async function summarizeText(text, options = {}) {
   });
 }
 
+/**
+ * Interpret/analyze text using Docker AI
+ * @param {string} text - Text to interpret
+ * @param {object} options - Interpretation options
+ * @returns {Promise<string>} Interpretation text
+ */
+async function interpretText(text, options = {}) {
+  const {
+    maxLength = 200,
+    style = 'analytical'
+  } = options;
+
+  const prompt = `Please provide a ${style} interpretation or analysis of the following text. Explain its meaning, significance, themes, or key points in no more than ${maxLength} words:\n\n${text}`;
+
+  return await callDockerAI(prompt, {
+    ...options,
+    maxTokens: maxLength * 2
+  });
+}
+
 module.exports = {
   callDockerAI,
-  summarizeText
+  summarizeText,
+  interpretText
 };

@@ -12,7 +12,10 @@
     "test:summarize": "node test-summarize.js",
     "test:logs": "node test-docker-logs.js",
     "test:docker": "node test-docker-service.js",
-    "test:codegen": "node test-code-generation.js"
+    "test:codegen": "node test-code-generation.js",
+    "test:speech": "node test-speech.js",
+    "test:requirements": "node test-requirements-decomposition.js",
+    "test:requirements-v2": "node test-requirements-decomposition-v2.js"
   },
   "keywords": ["edge-tts", "mcp", "text-to-speech", "docker"],
   "author": "",
